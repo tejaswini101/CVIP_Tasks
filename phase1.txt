@@ -1,0 +1,186 @@
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Book {
+    private int bookId;
+    private String title;
+    private String author;
+    private boolean available;
+    
+
+    public Book(int bookId, String title, String author) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+        this.available = true;
+        
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    @Override
+    public String toString() {
+        return "Book ID: " + bookId + ", Title: " + title + ", Author: " + author + ", Available: " + available;
+    }
+}
+
+class Library {
+    private List<Book> books;
+
+    public Library() {
+        this.books = new ArrayList<>();
+    }
+
+    public void addBook(int bookId, String title, String author) {
+        Book book = new Book(bookId, title, author);
+        books.add(book);
+        System.out.println("Book added successfully: " + book);
+    }
+
+    public void removeBook(int bookId) {
+        for (Book book : books) {
+            if (book.getBookId() == bookId) {
+                books.remove(book);
+                System.out.println("Book removed successfully: " + book);
+                return;
+            }
+        }
+        System.out.println("Book not found with ID: " + bookId);
+    }
+
+    public void displayBooks() {
+        if (books.isEmpty()) {
+            System.out.println("No books available in the library.");
+            return;
+        }
+        System.out.println("Books available in the library:");
+        for (Book book : books) {
+            System.out.println(book);
+        }
+    }
+
+    public void borrowBook(int bookId) {
+        for (Book book : books) {
+            if (book.getBookId() == bookId && book.isAvailable()) {
+                book.setAvailable(false);
+                System.out.println("Book borrowed successfully: " + book);
+                return;
+            }
+        }
+        System.out.println("Book not available for borrowing or not found with ID: " + bookId);
+    }
+
+    public void returnBook(int bookId) {
+        for (Book book : books) {
+            if (book.getBookId() == bookId && !book.isAvailable()) {
+                book.setAvailable(true);
+                System.out.println("Book returned successfully: " + book);
+                return;
+            }
+        }
+        System.out.println("Book not borrowed or not found with ID: " + bookId);
+    }
+
+    public List<Book> searchBooks(String keyword) {
+        List<Book> result = new ArrayList<>();
+        for (Book book : books) {
+            if (book.getTitle().toLowerCase().contains(keyword.toLowerCase())
+                    || book.getAuthor().toLowerCase().contains(keyword.toLowerCase())) {
+                result.add(book);
+            }
+        }
+        return result;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Library library = new Library();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\n*** Library Management System ***");
+            System.out.println("1. Add Book");
+            System.out.println("2. Remove Book");
+            System.out.println("3. Display Books");
+            System.out.println("4. Borrow Book");
+            System.out.println("5. Return Book");
+            System.out.println("6. Search Books");
+            System.out.println("7. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            switch (choice) {
+            case 1:
+                System.out.print("Enter Book ID: ");
+                int bookId = scanner.nextInt();
+                scanner.nextLine(); // consume newline
+                System.out.print("Enter Title: ");
+                String title = scanner.nextLine();
+                System.out.print("Enter Author: ");
+                String author = scanner.nextLine();
+                library.addBook(bookId, title, author);
+                break;
+            case 2:
+                System.out.print("Enter Book ID to remove: ");
+                int removeId = scanner.nextInt();
+                library.removeBook(removeId);
+                break;
+            case 3:
+                library.displayBooks();
+                System.out.println("Due date: 20 days");
+                break;
+            case 4:
+                System.out.print("Enter Book ID to borrow: ");
+                int borrowId = scanner.nextInt();
+                library.borrowBook(borrowId);
+                break;
+            case 5:
+                System.out.print("Enter Book ID to return: ");
+                int returnId = scanner.nextInt();
+                library.returnBook(returnId);
+                break;
+            case 6:
+                System.out.print("Enter search keyword: ");
+                String keyword = scanner.nextLine();
+                List<Book> searchResult = library.searchBooks(keyword);
+                if (searchResult.isEmpty()) {
+                    System.out.println("No books found matching the keyword: " + keyword);
+                } else {
+                    System.out.println("Search results:");
+                    for (Book book : searchResult) {
+                        System.out.println(book);
+                    }
+                }
+                break;
+            case 7:
+                System.out.println("Exiting...");
+                System.exit(0);
+            default:
+                System.out.println("Invalid choice! Please enter a number between 1 and 7.");
+            }
+        }
+    }
+}
+
